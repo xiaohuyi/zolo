@@ -67,7 +67,7 @@ func (t *TailTask) TailFile() {
 				fmt.Println(err)
 			}
 			record_offset(offset, t.TaskID)
-			t.Handler.StartHandler(msg)
+			t.Handler.StartHandler(msg.Text)
 		}
 	}
 }

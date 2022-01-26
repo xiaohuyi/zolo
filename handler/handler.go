@@ -2,8 +2,6 @@ package handler
 
 import (
 	"fmt"
-
-	"github.com/hpcloud/tail"
 )
 
 // 需要实现Handler 接口
@@ -15,8 +13,8 @@ func (h *HandlerDemo) HandlerBefore() interface{} {
 	return nil
 }
 
-func (h *HandlerDemo) Handler(line *tail.Line, opts ...interface{}) interface{} {
-	fmt.Println(line.Text)
+func (h *HandlerDemo) Handler(line string, opts ...interface{}) interface{} {
+	fmt.Println(line)
 	return nil
 }
 
@@ -25,7 +23,7 @@ func (h *HandlerDemo) HandlerAfter() interface{} {
 	return nil
 }
 
-func (h *HandlerDemo) StartHandler(line *tail.Line) {
+func (h *HandlerDemo) StartHandler(line string) {
 	h.HandlerBefore()
 	h.Handler(line)
 	h.HandlerAfter()
