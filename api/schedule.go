@@ -3,13 +3,18 @@ package api
 import (
 	"context"
 	"fmt"
-	com "mytail/common"
-	"mytail/handler"
-	"mytail/tailfile"
 	"strconv"
 	"time"
 
+	com "github.com/xiaohuyi/zolo/common"
+	"github.com/xiaohuyi/zolo/handler"
+	"github.com/xiaohuyi/zolo/tailfile"
+
 	"github.com/hpcloud/tail"
+)
+
+const (
+	MAXTASK int = 10
 )
 
 type schedule struct {
@@ -19,7 +24,7 @@ type schedule struct {
 
 func Newschedule() *schedule {
 	return &schedule{
-		tasks:   make(chan *tailfile.TailTask, 10), //  代表同时可以处理10个日志对象
+		tasks:   make(chan *tailfile.TailTask, MAXTASK), //  代表同时可以处理10个日志对象
 		taskMap: make(map[string]*tailfile.TailTask),
 	}
 }
@@ -29,8 +34,16 @@ func (s *schedule) RegisterHandler(handle handler.Handler, task *tailfile.TailTa
 	task.Handler = handle
 }
 
+// 生成任务ID  具体可能考虑用文件路径的哈希值吧，形成 文件路径 与 ID 的一一对应
+func (s *schedule) genTaskID(taskName string) string {
+	return taskName
+}
+
 // 生成tail 任务
-func (s *schedule) GoTask(taskName string, taskID string, path string, offset int64, whence int) *tailfile.TailTask {
+func (s *schedule) GoTask(taskName string, path string, offset int64, whence int) *tailfile.TailTask {
+
+	// 基于taskName+时间戳 生成一个唯一的taskID
+	taskID := s.genTaskID(taskName)
 
 	// 确认offset,如果找不到对应的record，则默认offset为0
 	isexists, _ := com.PathExists(fmt.Sprintf("%s.record", taskID))
@@ -65,7 +78,7 @@ func (s *schedule) Start() {
 	for {
 		select {
 		case task := <-s.tasks:
-			go task.TailFile() // 这里的协程数量得控制一下，用协程池吧
+			go task.TailFile() // s.tasks最多容量为10，所以最多10个携程数量
 		default:
 			time.Sleep(time.Second)
 		}

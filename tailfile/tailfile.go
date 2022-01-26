@@ -4,10 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"mytail/handler"
 	"os"
 	"strconv"
-	"time"
+
+	"github.com/xiaohuyi/zolo/handler"
 
 	"github.com/hpcloud/tail"
 )
@@ -22,6 +22,7 @@ type TailTask struct {
 	Handler  handler.Handler
 	TaskName string
 	TaskID   string
+	// RecordFs *os.File // 每个任务对应一个记录offset的句柄
 }
 
 type TailConfig struct {
@@ -37,6 +38,7 @@ func NewTailTask(ctx context.Context, cancel context.CancelFunc, path string, co
 		TaskName: taskName,
 		TaskID:   taskID,
 		cancel:   cancel,
+		// RecordFs: f,
 	}
 }
 
@@ -59,20 +61,20 @@ func (t *TailTask) TailFile() {
 		case <-t.ctx.Done(): // 等待上级通知
 			fmt.Println("任务结束")
 			return
-		case msg, _ := <-tailobj.Lines: // 这里是非阻塞的，写到default就是阻塞的
+		case msg := <-tailobj.Lines: // 这里是非阻塞的，写到default就是阻塞的
 			offset, err := tailobj.Tell()
 			if err != nil {
 				fmt.Println(err)
 			}
 			record_offset(offset, t.TaskID)
-			go t.Handler.StartHandler(msg)
-		default:
-			time.Sleep(time.Millisecond * 500)
+			t.Handler.StartHandler(msg)
 		}
 	}
 }
 
+// 暂时写入到文件，IO效率低，正式使用可以改为放到redis，再起一个线程定时去同步redis的offset到文件，也是为了持久化吧
 func record_offset(offset int64, taskid string) {
+
 	f, err := os.OpenFile(fmt.Sprintf("%s.record", taskid), os.O_WRONLY|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		fmt.Println(err)

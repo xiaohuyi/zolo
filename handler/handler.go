@@ -6,21 +6,22 @@ import (
 	"github.com/hpcloud/tail"
 )
 
+// 需要实现Handler 接口
 type HandlerDemo struct {
 }
 
 func (h *HandlerDemo) HandlerBefore() interface{} {
-	fmt.Println("start read log")
+	//fmt.Println("start read log")
 	return nil
 }
 
 func (h *HandlerDemo) Handler(line *tail.Line, opts ...interface{}) interface{} {
-	// fmt.Println(line.Text)
+	fmt.Println(line.Text)
 	return nil
 }
 
 func (h *HandlerDemo) HandlerAfter() interface{} {
-	fmt.Println("end...")
+	//fmt.Println("end...")
 	return nil
 }
 

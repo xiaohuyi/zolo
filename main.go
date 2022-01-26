@@ -1,28 +1,24 @@
 package main
 
 import (
-	"mytail/api"
-	h "mytail/handler"
+	"github.com/xiaohuyi/zolo/api"
+	h "github.com/xiaohuyi/zolo/handler"
 )
 
 func main() {
 	s := api.Newschedule()
 
-	taskName := "test"
-	taskID := "123456"
-	task := s.GoTask(taskName, taskID, "/opt/mytail/test.txt", 0, 0)
-	// handler := func() func(line *tail.Line) {
-	// 	count := 0
-	// 	return func(line *tail.Line) {
-	// 		fmt.Println(line.Text)
-	// 		count += 1
-	// 	}
-	// }()
-	s.RegisterHandler(&h.HandlerDemo{}, task)
-	s.PutTask(task)
-	go s.Start()
+	taskName := "test1"
+	// taskID := "123456"                                                             // 任务ID必须唯一，用UUID算法生成吧
+	task := s.GoTask(taskName, "/home/docker_images/sysdig/log/sysdig.json", 0, 0) // 生成task对象
+	s.RegisterHandler(&h.HandlerDemo{}, task)                                      // 注册任务
+	s.PutTask(task)                                                                // 添加任务到执行队列
 
-	// time.Sleep(time.Second * 5)
-	// s.Stop([]string{taskID}...)
+	task2 := s.GoTask("task2", "/home/beancluster_log/sysdig/log.json", 0, 0)
+	s.RegisterHandler(&h.HandlerDemo{}, task2) // 注册任务
+	s.PutTask(task2)
+
+	go s.Start() // 启动schedule
+
 	select {}
 }
