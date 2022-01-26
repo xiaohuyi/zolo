@@ -1,4 +1,4 @@
-module github.com/xiaohuyi/zolo
+module github.com/XiaoHuYi/zolo
 
 go 1.17
 

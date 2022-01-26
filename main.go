@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/xiaohuyi/zolo/api"
-	h "github.com/xiaohuyi/zolo/handler"
+	"github.com/XiaoHuYi/zolo/api"
+	h "github.com/XiaoHuYi/zolo/handler"
 )
 
 func main() {

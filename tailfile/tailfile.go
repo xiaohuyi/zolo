@@ -7,7 +7,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/xiaohuyi/zolo/handler"
+	"github.com/XiaoHuYi/zolo/handler"
 
 	"github.com/hpcloud/tail"
 )
