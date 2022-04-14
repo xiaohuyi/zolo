@@ -1,3 +1,8 @@
+/*
+ * @Author: xiaohuyi
+ * @Date: 2022-04-14 14:26:54
+ * @Description:
+ */
 package tailfile
 
 import (
@@ -59,14 +64,14 @@ func (t *TailTask) TailFile() {
 	for {
 		select {
 		case <-t.ctx.Done(): // 等待上级通知
-			fmt.Println("任务结束")
+			fmt.Println(t.TaskID + " 任务结束")
 			return
 		case msg := <-tailobj.Lines: // 这里是非阻塞的，写到default就是阻塞的
 			offset, err := tailobj.Tell()
 			if err != nil {
 				fmt.Println(err)
 			}
-			record_offset(offset, t.TaskID)
+			t.Handler.RecordOffset(offset, t.TaskID)
 			t.Handler.StartHandler(msg.Text)
 		}
 	}
