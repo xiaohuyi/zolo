@@ -12,7 +12,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/XiaoHuYi/zolo/handler"
+	"github.com/xiaohuyi/zolo/handler"
 
 	"github.com/hpcloud/tail"
 )

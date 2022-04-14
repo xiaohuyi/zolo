@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	com "github.com/XiaoHuYi/zolo/common"
-	"github.com/XiaoHuYi/zolo/handler"
-	"github.com/XiaoHuYi/zolo/tailfile"
+	com "github.com/xiaohuyi/zolo/common"
+	"github.com/xiaohuyi/zolo/handler"
+	"github.com/xiaohuyi/zolo/tailfile"
 
 	"github.com/hpcloud/tail"
 )
